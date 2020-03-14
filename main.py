@@ -10,7 +10,8 @@ def read_file(path):
             break
 
         is_valid, timestamp, event_type = parse_token( json.loads(line) ) # ToDo - process json.decoder.JSONDecodeError
-                                                                          # ToDo - json.loads стоит заменить на велосипед, заточенный под конкретные сообщения и более быстрый
+                                                                          # json.loads, очевидно, совершает избыточное число проверок, и для конкретного вида логов можно написать более быстрый парсер;
+                                                                          # но добиться большей скорости (при сохранении хоть какой-то проверки корректности), используя python, мне не удалось.
         validness = "valid" if is_valid else "non_valid"
         timestamp -= timestamp % (3600 * 24)                 # начало дня
         if timestamp not in result[validness]:
