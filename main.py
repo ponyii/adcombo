@@ -11,6 +11,7 @@ def read_file(path):
 
         is_valid, timestamp, event_type = parse_token( json.loads(line) ) # ToDo - process json.decoder.JSONDecodeError
         validness = "valid" if is_valid else "non_valid"
+        timestamp -= timestamp % (3600 * 24)                 # начало дня
         if timestamp not in result[validness]:
             result[validness][timestamp] = {"create": 0, "update": 0, "delete": 0}
         result[validness][timestamp][event_type] += 1
