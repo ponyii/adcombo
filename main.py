@@ -26,17 +26,18 @@ def parse_token(token):
         raise Exception("Invalid token")
 
     ids = set( token["ids"] )   # дубликацию чисел в token["ids"] считаем допустимой
-    ids_num = 0
+    query_ids = set()
     for el in token["query_string"].split("&"):    # я предполагаю, что query_string не очень велики, и обрабатывать их "по частям" не имеет смысла
         if len(el) > 0:
             pair = el.split("=")
             if (len(pair) != 2):                         # я считаю query_string валидной, если она содержит &-separated записи вида "<что угодно>=<что угодно>"
                 raise Exception("Invalid query_string")  # скорее всего, ограничение на используемые символы должно быть более жестким
             if pair[0] == "id":
-                ids_num += 1
-                if int(pair[1]) not in ids or len(ids) < ids_num:  # ToDo - process ValueError
+                tmp = int(pair[1])
+                if tmp not in ids:   # ToDo - process ValueError
                     return False, token["timestamp"], token["event_type"]
-    return len(ids) == ids_num, token["timestamp"], token["event_type"]
+                query_ids.add(tmp)
+    return len(ids) == len(query_ids), token["timestamp"], token["event_type"]
 
 
 print(json.dumps( read_file("./test_files/0.log"), sort_keys=True, indent=4 ))
