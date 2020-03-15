@@ -1,25 +1,20 @@
 import json
 
+
+# самые долгие - json.loads и parse_token; меньшее, но заметное время - обновление result
 def read_file(path):
     result = {"valid": {}, "non_valid": {}}
+    with open(path, 'r') as f:        # предполагаю, что число файлов значительно превышает число доступных потоков, так что потоку можно отдать файл целиком
+        for line in f:
+            is_valid, timestamp, event_type = parse_token( json.loads(line) ) # ToDo - process json.decoder.JSONDecodeError
+                                                                              # json.loads, очевидно, совершает избыточное число проверок, и для конкретного вида логов можно написать более быстрый парсер;
+                                                                              # но добиться большей скорости (при сохранении хоть какой-то проверки корректности), используя python, мне не удалось.
+            validness = "valid" if is_valid else "non_valid"
+            timestamp -= timestamp % (3600 * 24)                 # начало дня
+            if timestamp not in result[validness]:
+                result[validness][timestamp] = {"create": 0, "update": 0, "delete": 0}
+            result[validness][timestamp][event_type] += 1
 
-    # ToDo - посмотреть на альтернативные способы чтения файлов
-    f = open(path, 'r')        # предполагаю, что число файлов значительно превышает число доступных потоков, так что потоку можно отдать файл целиком
-    while True:
-        line = f.readline()    # ToDo - стоит считывать пачками
-        if len(line) == 0:
-            break
-
-        is_valid, timestamp, event_type = parse_token( json.loads(line) ) # ToDo - process json.decoder.JSONDecodeError
-                                                                          # json.loads, очевидно, совершает избыточное число проверок, и для конкретного вида логов можно написать более быстрый парсер;
-                                                                          # но добиться большей скорости (при сохранении хоть какой-то проверки корректности), используя python, мне не удалось.
-        validness = "valid" if is_valid else "non_valid"
-        timestamp -= timestamp % (3600 * 24)                 # начало дня
-        if timestamp not in result[validness]:
-            result[validness][timestamp] = {"create": 0, "update": 0, "delete": 0}
-        result[validness][timestamp][event_type] += 1
-
-    f.close()
     return result
 
 # @token - запрос (dict), описанный в https://gist.github.com/onyxim/bb2d1828df741499d17ba97ad3319ef1

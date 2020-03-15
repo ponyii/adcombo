@@ -7,28 +7,24 @@ def _coin():
 # генерирует логи за [days_num, days_num * 2] дней, с [lines_num, lines_num * 2] записями в каждый;
 # возвращает словарь, содержащий корректную группировку записей.
 def generate_log(path, days_num, lines_num):
-    log = open(path + ".log", "w")
-
     groups = {"valid": {}, "non_valid": {}}
-    last = 10
-    for i in range( random.randint(days_num, days_num * 2) ):
-        last = random.randint(last + 1, last * 2)       # генерация уникальных номеров дней
-        timestamp = last * 3600 * 24
-        groups["valid"]    [timestamp] = {"create": 0, "update": 0, "delete": 0}
-        groups["non_valid"][timestamp] = {"create": 0, "update": 0, "delete": 0}
-        for i in range( random.randint(lines_num, lines_num * 2) ):
-            event_type = random.sample( ["create", "update", "delete"], 1 )[0]
-            is_valid = _coin()                # валидная и невалидная строка равновероятны
-            validness = "valid" if is_valid else "non_valid"
-            groups[validness][timestamp][event_type] += 1
-            log.write( generate_line(is_valid, event_type, timestamp) + "\n" )
-        # ToDo - check if groups[validness][timestemp] is empty
+    with open(path + ".log", "w") as f:
+        last = 10
+        for i in range( random.randint(days_num, days_num * 2) ):
+            last = random.randint(last + 1, last * 2)       # генерация уникальных номеров дней
+            timestamp = last * 3600 * 24
+            groups["valid"]    [timestamp] = {"create": 0, "update": 0, "delete": 0}
+            groups["non_valid"][timestamp] = {"create": 0, "update": 0, "delete": 0}
+            for i in range( random.randint(lines_num, lines_num * 2) ):
+                event_type = random.sample( ["create", "update", "delete"], 1 )[0]
+                is_valid = _coin()                # валидная и невалидная строка равновероятны
+                validness = "valid" if is_valid else "non_valid"
+                groups[validness][timestamp][event_type] += 1
+                f.write( generate_line(is_valid, event_type, timestamp) + "\n" )
+            # ToDo - check if groups[validness][timestemp] is empty
 
-    log.close()
-
-    f = open(path + ".groups", "w")
-    f.write(json.dumps(groups, sort_keys=True))
-    f.close()
+    with open(path + ".groups", "w") as f:
+        f.write(json.dumps(groups, sort_keys=True))
 
 # генерация запроса, подобного описанному в https://gist.github.com/onyxim/bb2d1828df741499d17ba97ad3319ef1
 # запрос может быть невалидным, но число полей, типы значений и т.д. будут корректными
