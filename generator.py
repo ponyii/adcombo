@@ -21,7 +21,7 @@ def generate_log(path, days_num, lines_num):
             is_valid = _coin()                # валидная и невалидная строка равновероятны
             validness = "valid" if is_valid else "non_valid"
             groups[validness][timestamp][event_type] += 1
-            f.write( generate_line(is_valid, event_type, timestamp) )
+            f.write( generate_line(is_valid, event_type, timestamp) + "\n" )
         # ToDo - check if groups[validness][timestemp] is empty
 
     f.close()
