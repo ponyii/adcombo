@@ -3,17 +3,18 @@ import log_parser
 import json
 import time
 
-# ToDo - rename me
+# возвращает текущее time.process_time() и выводит в консоль @message;
+# если второй аргумент положительный, также выводит в консоль разницу во времени;
 def _time(message, process_time = -1):
     if process_time == -1:
         print(message)
         return time.process_time()
     else:
-        print( message, " - ", int( (time.process_time() - process_time) * 1000000) )
-        process_time = time.process_time()
+        print(message, " - ", int( (time.process_time() - process_time) ))
+        return time.process_time()
 
 # проверка корректности функции read_file на автоматически сгенерированных логах
-def the_only_one():
+def read_file_1():
     for name in ["small", "medium", "big"]:       # ToDo - all the log files in the folder
         path = "./test_files_generated/" + name
         f = open(path + ".groups", "r")
@@ -24,4 +25,4 @@ def the_only_one():
         assert( result == expected_result, result, expected_result )
         _time(name + " - ok", pt)
 
-the_only_one()
+read_file_1()     # в "настоящем" коде этой строки бы не было, но был бы специальный запускатель тестов

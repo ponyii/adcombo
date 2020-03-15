@@ -30,6 +30,8 @@ def generate_log(path, days_num, lines_num):
     f.write(json.dumps(groups))
     f.close()
 
+# генерация запроса, подобного описанному в https://gist.github.com/onyxim/bb2d1828df741499d17ba97ad3319ef1
+# запрос может быть невалидным, но число полей, типы значений и т.д. будут корректными
 def generate_line(is_valid, event_type, timestamp):
     result = {}
     result["event_type"] = event_type
@@ -45,14 +47,15 @@ def generate_line(is_valid, event_type, timestamp):
     # составление списка id для query_string
     ids_in_query = []
     if is_valid:
-        ids_in_query = result["ids"].copy() + result["ids"][2:10].copy()
+        ids_in_query = result["ids"].copy() + result["ids"][2:10].copy()     # ToDo - убрать hardcode
     else:
-        if _coin():   # нехватка id
+        if _coin():   # невалидный запрос - недостаток id
             ids_in_query = result["ids"][2:10].copy()
-        else:         # избыток id
+        else:         # невалидный запрос - избыток id
             ids_in_query = result["ids"].copy() + result["ids"][2:10].copy()
             ids_in_query.append( random.randint(result["ids"][-1] + 1,     result["ids"][-1] * 2) )
             ids_in_query.append( random.randint(result["ids"][-1] * 2 + 1, result["ids"][-1] * 4) )
+        # бывают, конечно, и дургие невалидные запросы, но кажется достаточным проверить эти два вида
     random.shuffle( ids_in_query )
 
     # составление query_string
