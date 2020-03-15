@@ -27,7 +27,7 @@ def generate_log(path, days_num, lines_num):
     log.close()
 
     f = open(path + ".groups", "w")
-    f.write(json.dumps(groups))
+    f.write(json.dumps(groups, sort_keys=True))
     f.close()
 
 # генерация запроса, подобного описанному в https://gist.github.com/onyxim/bb2d1828df741499d17ba97ad3319ef1
