@@ -16,7 +16,7 @@ def generate_log(path, days_num, lines_num):
         timestamp = last * 3600 * 24
         groups["valid"]    [timestamp] = {"create": 0, "update": 0, "delete": 0}
         groups["non_valid"][timestamp] = {"create": 0, "update": 0, "delete": 0}
-        for i in range( random.randint(lines_per_day, lines_per_day * 2) ):
+        for i in range( random.randint(lines_num, lines_num * 2) ):
             event_type = random.sample( ["create", "update", "delete"], 1 )[0]
             is_valid = _coin()                # валидная и невалидная строка равновероятны
             validness = "valid" if is_valid else "non_valid"
