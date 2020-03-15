@@ -40,6 +40,3 @@ def parse_token(token):
                     return False, token["timestamp"], token["event_type"]
                 query_ids.add(tmp)
     return len(ids) == len(query_ids), token["timestamp"], token["event_type"]
-
-
-print(json.dumps( read_file("./test_files/0.log"), sort_keys=True, indent=4 ))

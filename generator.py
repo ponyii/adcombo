@@ -7,7 +7,7 @@ def _coin():
 # генерирует логи за [days_num, days_num * 2] дней, с [lines_num, lines_num * 2] записями в каждый;
 # возвращает словарь, содержащий корректную группировку записей.
 def generate_log(path, days_num, lines_num):
-    f = open(path, "w")
+    log = open(path + ".log", "w")
 
     groups = {"valid": {}, "non_valid": {}}
     last = 10
@@ -21,11 +21,14 @@ def generate_log(path, days_num, lines_num):
             is_valid = _coin()                # валидная и невалидная строка равновероятны
             validness = "valid" if is_valid else "non_valid"
             groups[validness][timestamp][event_type] += 1
-            f.write( generate_line(is_valid, event_type, timestamp) + "\n" )
+            log.write( generate_line(is_valid, event_type, timestamp) + "\n" )
         # ToDo - check if groups[validness][timestemp] is empty
 
+    log.close()
+
+    f = open(path + ".groups", "w")
+    f.write(json.dumps(groups))
     f.close()
-    return groups
 
 def generate_line(is_valid, event_type, timestamp):
     result = {}
@@ -65,6 +68,6 @@ def generate_line(is_valid, event_type, timestamp):
     return json.dumps(result)
 
 
-# print( json.dumps( generate_line(True, "delete", 0), sort_keys=True, indent=4 ) )
-# print( json.dumps( generate_line(False, "delete", 3600 * 24),  sort_keys=True, indent=4 ) )
-# print( json.dumps( generate_log("./test_files_generated/0.log", 10, 10), sort_keys=True, indent=4  ) )
+# generate_log("./test_files_generated/small", 2, 5)
+# generate_log("./test_files_generated/medium", 10, 200)
+# generate_log("./test_files_generated/big", 50, 1000)
