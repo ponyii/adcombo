@@ -14,6 +14,7 @@ def merge_groups(first, second):
 
 # ToDO - а если в директории много файлов? если они появляются?
 # можно еще использовать `with os.scandir(path) as it` или `pathlib.Path.cwd().iterdir()`
+# число файлов значительно превышает число CPU, так что процессу можно отдать файл целиком
 def read_dir(path, proc_n):
     pool = Pool(processes=proc_n)
     log_files = []
@@ -23,7 +24,3 @@ def read_dir(path, proc_n):
     for i in range(1, len(results)):
         merge_groups(results[0], results[i])
     return results[0]
-
-if __name__ == "__main__":
-    import json
-    print(json.dumps( read_dir("./test_files/", 2), sort_keys=True, indent=4 ))

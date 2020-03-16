@@ -2,8 +2,8 @@ import generator
 import log_parser
 import dir_parser
 import json
+import os
 from helpers import _time
-
 
 # проверка корректности функции read_file на автоматически сгенерированных логах
 def read_file_1():
@@ -21,6 +21,15 @@ def read_file_1():
             # используется сравнение результатов как строк (а не как словарей),
             # поскольку если а - dict с ключами-int'ами, то json.loads( json.dumps(a) ) - dict с ключами-строками;
             # ToDO - может, использовать вместо json что-то python-ориентированное?
+
+# read_file не падает при чтении образцов логов
+def read_file_2():
+    for file_name in os.listdir("./test_files"):
+        log_parser.read_file("./test_files/" + file_name)    # ToDo - use pathlib
+
+# read_dir не падает при чтении образцов логов
+def read_dir_1():
+    dir_parser.read_dir("./test_files/", 2)
 
 def _merge_groups_internal(groups, expected_result):
     for i in range(1, len(groups)):
@@ -51,4 +60,6 @@ def merge_groups_1():
 # в "настоящем" коде этих строк бы не было, но был бы специальный запускатель тестов
 if __name__ == "__main__":
     read_file_1()
+    read_file_2()
+    read_dir_1()
     merge_groups_1()

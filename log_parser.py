@@ -1,7 +1,8 @@
 import json
 import re
+# from helpers import _time
 
-# ToDo - замерь время
+# узкие места - json.loads и is_valid
 def read_file(path):
     result = {"valid": {}, "non_valid": {}}
     with open(path, 'r') as f:
@@ -20,11 +21,12 @@ def read_file(path):
 # @request - запрос (dict), описанный в https://gist.github.com/onyxim/bb2d1828df741499d17ba97ad3319ef1
 # @returns (is_valid, timestamp, event_type)
 # корректность аргумента не проверяется
+# узкие места - findall и обработка substr
 def is_valid(request):
     expected_ids = set( request["ids"] )
     query_ids = set()
-    for substr in re.findall(r'id=\d*', request["query_string"]):
-        id = int( substr[3:] )
+    for substr in re.findall(r'&id=\d*|^id=\d*', request["query_string"]):    # естественно использовать finditer, чтобы не рассматривать часть строк до конца, но findall быстрее;
+        id = int(substr[ substr.find("id=") + len("id=") : ])
         if id not in expected_ids:
             return False
         query_ids.add(id)
