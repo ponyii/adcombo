@@ -21,7 +21,7 @@ def read_file_1():
             # то json.loads( json.dumps(a) ) - dict с ключами-строками;
             # ToDO - может, использовать вместо json что-то python-ориентированное?
 
-def merge_groups_internal(groups, expected_result):
+def _merge_groups_internal(groups, expected_result):
     for i in range(1, len(groups)):
         dir_parser.merge_groups( groups[0], groups[i] )
     assert( groups[0] == expected_result )
@@ -44,7 +44,7 @@ def merge_groups_1():
            {"valid": {1: {"a":1, "b":2, "c":3}, 2: {"a":6, "b":12, "c":18}, 3: {"a":14, "b":28, "c":42}, 4: {"a":7, "b":14, "c":21}}} ),
     )
     for groups, expected_result in cases:
-        merge_groups_internal(groups, expected_result)
+        _merge_groups_internal(groups, expected_result)
 
 # в "настоящем" коде этих строк бы не было, но был бы специальный запускатель тестов
 if __name__ == "__main__":
