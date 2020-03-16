@@ -1,4 +1,5 @@
 import json
+# import bicycle
 # from helpers import _time
 
 # узкие места - json.loads и is_valid
@@ -6,9 +7,9 @@ def read_file(path):
     result = {"valid": {}, "non_valid": {}}
     with open(path, 'r') as f:
         for line in f:
-            request = json.loads(line)   # json.loads, очевидно, совершает избыточное число проверок, и для запросов можно написать более быстрый парсер;
-                                         # но добиться существенно большей скорости, используя python, мне не удалось.
-                                         # pickle быстрее, но оперирует потоками байтов и не прочтет логи; интересно, можно писать в лог pickled requests?
+            request = json.loads(line)        # json.loads, очевидно, совершает избыточное число проверок, и для запросов можно написать более быстрый парсер.
+                                              # pickle быстрее, но оперирует потоками байтов и не прочтет логи; интересно, можно писать в лог pickled requests?
+            # request = bicycle.loads(line)   # см. комментарий в bicycle.py
             validness = "valid" if is_valid(request) else "non_valid"
             timestamp = request["timestamp"] - request["timestamp"] % (3600 * 24)                 # начало дня
             if timestamp not in result[validness]:
@@ -35,7 +36,8 @@ def is_valid(request):
             right = q.find("&", left)
             if right == -1:
                 right = len(q)
-            id = int(q[left + len(prefix) : right])       # ToDo - от конвертации можно избавиться, если читать ids запроса как массив строк
+            id = int(q[left + len(prefix) : right])       # от конвертации можно избавиться, если читать ids запроса как массив строк
+            # id = q[left + len(prefix) : right]          # см. комментарий в bicycle.py
 
             if id not in expected_ids:     # ToDo - move it to callback?
                 return False
