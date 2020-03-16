@@ -16,15 +16,17 @@ def read_file_1():
 
         with open(path + ".groups", "r") as f:
             expected_result = f.readline()
-            assert( json.dumps(result, sort_keys=True) == expected_result )
-            # используется сравнение результатов как строк, поскольку если а - dict с ключами-int'ами,
-            # то json.loads( json.dumps(a) ) - dict с ключами-строками;
+            assert json.dumps(result, sort_keys=True) == expected_result, \
+                "DIFFERNT GROUPS:\n" + json.dumps(result, sort_keys=True) + "\n" + expected_result
+            # используется сравнение результатов как строк (а не как словарей),
+            # поскольку если а - dict с ключами-int'ами, то json.loads( json.dumps(a) ) - dict с ключами-строками;
             # ToDO - может, использовать вместо json что-то python-ориентированное?
 
 def _merge_groups_internal(groups, expected_result):
     for i in range(1, len(groups)):
         dir_parser.merge_groups( groups[0], groups[i] )
-    assert( groups[0] == expected_result )
+    assert groups[0] == expected_result, \
+        "DIFFERNT GROUPS:\n" + groups[0] + "\n" + expected_result
 
 def merge_groups_1():
      # tuple of pairs (groups, expected_result)
