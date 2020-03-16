@@ -1,5 +1,4 @@
 import json
-import re
 # from helpers import _time
 
 # узкие места - json.loads и is_valid
@@ -26,7 +25,7 @@ def is_valid(request):
     query_ids = set()
     q = request["query_string"]
     prefix = "id="
-    
+
     left = 0
     while True:
         left = q.find(prefix, left)
