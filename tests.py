@@ -6,7 +6,7 @@ import os
 from helpers import _time
 
 # проверка корректности функции read_file на автоматически сгенерированных логах
-def read_file_1():
+def read_file_gen():
     for name in ["small", "medium", "big"]:       # ToDo - all the log files in the folder
         path = "./test_files_generated/" + name
 
@@ -23,12 +23,12 @@ def read_file_1():
             # ToDO - может, использовать вместо json что-то python-ориентированное?
 
 # read_file не падает при чтении образцов логов
-def read_file_2():
+def read_file_real():
     for file_name in os.listdir("./test_files"):
         log_parser.read_file("./test_files/" + file_name)    # ToDo - use pathlib
 
 # read_dir не падает при чтении образцов логов
-def read_dir_1():
+def read_dir_real():
     dir_parser.read_dir("./test_files/", 2)
 
 def _merge_groups_internal(groups, expected_result):
@@ -37,7 +37,7 @@ def _merge_groups_internal(groups, expected_result):
     assert groups[0] == expected_result, \
         "DIFFERNT GROUPS:\n" + groups[0] + "\n" + expected_result
 
-def merge_groups_1():
+def merge_groups():
      # tuple of pairs (groups, expected_result)
     cases = (
         # 2 groups, no common keys
@@ -59,7 +59,7 @@ def merge_groups_1():
 
 # в "настоящем" коде этих строк бы не было, но был бы специальный запускатель тестов
 if __name__ == "__main__":
-    read_file_1()
-    read_file_2()
-    read_dir_1()
-    merge_groups_1()
+    read_file_gen()
+    read_file_real()
+    read_dir_real()
+    merge_groups()
