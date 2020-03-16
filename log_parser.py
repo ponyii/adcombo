@@ -21,13 +21,28 @@ def read_file(path):
 # @request - запрос (dict), описанный в https://gist.github.com/onyxim/bb2d1828df741499d17ba97ad3319ef1
 # @returns (is_valid, timestamp, event_type)
 # корректность аргумента не проверяется
-# узкие места - findall и обработка substr
 def is_valid(request):
     expected_ids = set( request["ids"] )
     query_ids = set()
-    for substr in re.findall(r'&id=\d*|^id=\d*', request["query_string"]):    # естественно использовать finditer, чтобы не рассматривать часть строк до конца, но findall быстрее;
-        id = int(substr[ substr.find("id=") + len("id=") : ])
-        if id not in expected_ids:
-            return False
-        query_ids.add(id)
+    q = request["query_string"]
+    prefix = "id="
+    
+    left = 0
+    while True:
+        left = q.find(prefix, left)
+        if left == -1:      # no more ids
+            break
+        elif left == 0 or q[left - 1] == "&":
+            right = q.find("&", left)
+            if right == -1:
+                right = len(q)
+            id = int(q[left + len(prefix) : right])       # ToDo - от конвертации можно избавиться, если читать ids запроса как массив строк
+
+            if id not in expected_ids:     # ToDo - move it to callback?
+                return False
+            query_ids.add(id)
+
+            left = right + 1
+        else:      # another key ends with `id`
+            left += 1
     return len(expected_ids) == len(query_ids)
