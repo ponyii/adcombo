@@ -9,7 +9,7 @@ def merge_groups(first, second):
             if timestamp not in first[validness]:
                 first[validness][timestamp] = second[validness][timestamp]
             else:
-                for event_type, num in second[validness][timestamp]:
+                for event_type, num in second[validness][timestamp].items():
                     first[validness][timestamp][event_type] += num
 
 # ToDO - а если в директории много файлов? если они появляются?
