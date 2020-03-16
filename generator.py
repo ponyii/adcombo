@@ -66,7 +66,9 @@ def generate_line(is_valid, event_type, timestamp):
 
     return json.dumps(result)
 
-
-# generate_log("./test_files_generated/small", 2, 5)
-# generate_log("./test_files_generated/medium", 10, 200)
-# generate_log("./test_files_generated/big", 50, 1000)
+'''
+if __name__ == "__main__":
+    generate_log("./test_files_generated/small", 2, 5)
+    generate_log("./test_files_generated/medium", 10, 200)
+    generate_log("./test_files_generated/big", 50, 1000)
+'''
