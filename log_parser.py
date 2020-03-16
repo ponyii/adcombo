@@ -8,7 +8,7 @@ def read_file(path):
         for line in f:
             request = json.loads(line)   # json.loads, очевидно, совершает избыточное число проверок, и для запросов можно написать более быстрый парсер;
                                          # но добиться существенно большей скорости, используя python, мне не удалось.
-                                         # ToDO - поищи другие готовые парсеры
+                                         # pickle быстрее, но оперирует потоками байтов и не прочтет логи; интересно, можно писать в лог pickled requests?
             validness = "valid" if is_valid(request) else "non_valid"
             timestamp = request["timestamp"] - request["timestamp"] % (3600 * 24)                 # начало дня
             if timestamp not in result[validness]:

@@ -20,7 +20,7 @@ def read_file_gen():
                 "DIFFERNT GROUPS:\n" + json.dumps(result, sort_keys=True) + "\n" + expected_result
             # используется сравнение результатов как строк (а не как словарей),
             # поскольку если а - dict с ключами-int'ами, то json.loads( json.dumps(a) ) - dict с ключами-строками;
-            # ToDO - может, использовать вместо json что-то python-ориентированное?
+            # ToDO - use pickle
 
 # read_file не падает при чтении образцов логов
 def read_file_real():
