@@ -10,9 +10,9 @@ def read_file_gen():
     for name in ["small", "medium", "big"]:       # ToDo - all the log files in the folder
         path = "./test_files_generated/" + name
 
-        pt = _time(name + " - start")
+        t = _time(name + " - start")
         result = log_parser.read_file(path + ".log")
-        _time(name + " - parsed", pt)
+        _time(name + " - parsed", t)
 
         with open(path + ".groups", "r") as f:
             expected_result = f.readline()
@@ -24,8 +24,10 @@ def read_file_gen():
 
 # read_file не падает при чтении образцов логов
 def read_file_real():
+    t = _time("real - start")
     for file_name in os.listdir("./test_files"):
         log_parser.read_file("./test_files/" + file_name)    # ToDo - use pathlib
+    t = _time("real - parsed", t)
 
 # read_dir не падает при чтении образцов логов
 def read_dir_real():
