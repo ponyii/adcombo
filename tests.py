@@ -3,16 +3,19 @@ import dir_parser
 import json
 import os
 from helpers import _time
+from multiprocessing import cpu_count
 
 # Проверка корректности функции log_parser.read_file на автоматически сгенерированных логах;
 # фактически именно здесь проверяется log_parser.is_valid - писать отдельный тест для функции, возвращающей бинарное значение, не кажется осмысленным.
-def read_file_gen():
-    for name in ["small", "medium", "big"]:       # ToDo - all the log files in the folder
-        path = "./test_files_generated/" + name
+def read_file_gen(dir):
+    for file_name in os.listdir(dir):
+        if not file_name.endswith(".log"):
+            continue
+        path = os.path.join(dir, file_name[:-4])
 
-        t = _time(name + " - start")
+        t = _time(file_name + " - start")
         result = log_parser.read_file(path + ".log")
-        _time(name + " - parsed", t)
+        _time(file_name + " - parsed", t)
 
         with open(path + ".groups", "r") as f:
             expected_result = f.readline()
@@ -20,19 +23,20 @@ def read_file_gen():
                 "DIFFERNT GROUPS:\n" + json.dumps(result, sort_keys=True) + "\n" + expected_result
             # используется сравнение результатов как строк (а не как словарей),
             # поскольку если а - dict с ключами-int'ами, то json.loads( json.dumps(a) ) - dict с ключами-строками;
-            # ToDO - use pickle
+            # можно было бы использовать pickle; с другой стороны, приятно обойтись одним парсером,
+            # а json.dumps хочется использовать для красивой печати группировки в случае ошибки.
 
 # log_parser.read_file не падает при чтении образцов логов
-def read_file_real():
+def read_file_real(dir):
     t = _time("read_file - real - start")
-    for file_name in os.listdir("./test_files"):
-        log_parser.read_file("./test_files/" + file_name)    # ToDo - use pathlib
+    for file_name in os.listdir(dir):
+        log_parser.read_file( os.path.join(dir, file_name) )
     t = _time("read_file - real - parsed", t)
 
 # log_parser.read_dir не падает при чтении образцов логов
-def read_dir_real():
+def read_dir_real(dir):
     t = _time("read_dir - real - start")
-    dir_parser.read_dir("./test_files/", 2)     # ToDo - thread num
+    dir_parser.read_dir( dir, cpu_count() )
     t = _time("read_dir - real - parsed", t)
 
 
@@ -65,7 +69,7 @@ def merge_groups():
 
 # в "настоящем" коде этих строк бы не было, но был бы специальный запускатель тестов
 if __name__ == "__main__":
-    read_file_gen()
-    read_file_real()
-    read_dir_real()
+    read_file_gen("./test_files_generated")
+    read_file_real("./test_files")
+    read_dir_real("./test_files/")
     merge_groups()
