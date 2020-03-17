@@ -1,15 +1,21 @@
 import random
 import json
 
+'''
+При генерации используется какое-то количество hardcoded значений;
+с одной стороны, от них хотелось бы избавиться, с другой - это усложнит чтение кода.
+Я счел, что это неоднозначный вопрос, решающийся прочтением code policy компании, и (за отсутствием оного) оставил все как есть. 
+'''
+
 def _coin():
     return random.randint(1,2) == 1
 
-# генерирует логи за [days_num, days_num * 2] дней, с [lines_num, lines_num * 2] записями в каждый;
-# возвращает словарь, содержащий корректную группировку записей.
+# генерирует логи за [days_num, days_num * 2] дней, с [lines_num, lines_num * 2] записями в каждом;
+# возвращает словарь, содержащий ожидаемую группировку записей.
 def generate_log(path, days_num, lines_num):
     groups = {"valid": {}, "non_valid": {}}
     with open(path + ".log", "w") as f:
-        last = 10
+        last = 10          # число, взятое с потолка; номер дня, для timestamp;
         for i in range( random.randint(days_num, days_num * 2) ):
             last = random.randint(last + 1, last * 2)       # генерация уникальных номеров дней
             timestamp = last * 3600 * 24
@@ -17,7 +23,7 @@ def generate_log(path, days_num, lines_num):
             groups["non_valid"][timestamp] = {"create": 0, "update": 0, "delete": 0}
             for i in range( random.randint(lines_num, lines_num * 2) ):
                 event_type = random.sample( ["create", "update", "delete"], 1 )[0]
-                is_valid = _coin()                # валидная и невалидная строка равновероятны
+                is_valid = _coin()                          # валидная и невалидная строка равновероятны
                 validness = "valid" if is_valid else "non_valid"
                 groups[validness][timestamp][event_type] += 1
                 f.write( generate_line(is_valid, event_type, timestamp) + "\n" )
@@ -43,12 +49,12 @@ def generate_line(is_valid, event_type, timestamp):
     # составление списка id для query_string
     ids_in_query = []
     if is_valid:
-        ids_in_query = result["ids"].copy() + result["ids"][2:10].copy()     # ToDo - убрать hardcode
+        ids_in_query = result["ids"].copy() + result["ids"][2:10].copy()        # все id, некоторые дважды
     else:
         if _coin():   # невалидный запрос - недостаток id
             ids_in_query = result["ids"][2:10].copy()
         else:         # невалидный запрос - избыток id
-            ids_in_query = result["ids"].copy() + result["ids"][2:10].copy()
+            ids_in_query = result["ids"].copy() + result["ids"][2:10].copy()    # все id, некоторые дважды
             ids_in_query.append( random.randint(result["ids"][-1] + 1,     result["ids"][-1] * 2) )
             ids_in_query.append( random.randint(result["ids"][-1] * 2 + 1, result["ids"][-1] * 4) )
         # бывают, конечно, и дургие невалидные запросы, но кажется достаточным проверить эти два вида
