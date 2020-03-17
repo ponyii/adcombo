@@ -1,11 +1,10 @@
-import generator
 import log_parser
 import dir_parser
 import json
 import os
 from helpers import _time
 
-# проверка корректности функции read_file на автоматически сгенерированных логах
+# проверка корректности функции log_parser.read_file на автоматически сгенерированных логах
 def read_file_gen():
     for name in ["small", "medium", "big"]:       # ToDo - all the log files in the folder
         path = "./test_files_generated/" + name
@@ -22,16 +21,19 @@ def read_file_gen():
             # поскольку если а - dict с ключами-int'ами, то json.loads( json.dumps(a) ) - dict с ключами-строками;
             # ToDO - use pickle
 
-# read_file не падает при чтении образцов логов
+# log_parser.read_file не падает при чтении образцов логов
 def read_file_real():
-    t = _time("real - start")
+    t = _time("read_file - real - start")
     for file_name in os.listdir("./test_files"):
         log_parser.read_file("./test_files/" + file_name)    # ToDo - use pathlib
-    t = _time("real - parsed", t)
+    t = _time("read_file - real - parsed", t)
 
-# read_dir не падает при чтении образцов логов
+# log_parser.read_dir не падает при чтении образцов логов
 def read_dir_real():
-    dir_parser.read_dir("./test_files/", 2)
+    t = _time("read_dir - real - start")
+    dir_parser.read_dir("./test_files/", 2)     # ToDo - thread num
+    t = _time("read_dir - real - parsed", t)
+
 
 def _merge_groups_internal(groups, expected_result):
     for i in range(1, len(groups)):
@@ -39,6 +41,7 @@ def _merge_groups_internal(groups, expected_result):
     assert groups[0] == expected_result, \
         "DIFFERNT GROUPS:\n" + groups[0] + "\n" + expected_result
 
+# test for dir_parser.merge_groups
 def merge_groups():
      # tuple of pairs (groups, expected_result)
     cases = (
