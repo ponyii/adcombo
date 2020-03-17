@@ -2,7 +2,8 @@ from multiprocessing import Pool
 import log_parser
 import os
 
-# совмещение двух группировок запросов; корректность аргументов не проверяется
+# Совмещение двух группировок запросов (@first изменяется, @second - нет);
+# ОСТОРОЖНО, корректность аргументов не проверяется.
 def merge_groups(first, second):
     for validness in second:
         for timestamp in second[validness]:
@@ -13,7 +14,9 @@ def merge_groups(first, second):
                     first[validness][timestamp][event_type] += num
 
 
-# число файлов значительно превышает число CPU, так что процессу можно отдать файл целиком;
+# Чтение (мультипроцессорное) папки с логами; возвращает группировку запросов;
+# ОСТОРОЖНО, корректность файлов логов, наличие инородных файлов и т.п. не проверяется.
+# число файлов значительно превышает число CPU, так что процесс получает файл целиком.
 def read_dir(path, proc_n):
     pool = Pool(processes=proc_n)
     log_files = []
