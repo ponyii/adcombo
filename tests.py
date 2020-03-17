@@ -4,7 +4,8 @@ import json
 import os
 from helpers import _time
 
-# проверка корректности функции log_parser.read_file на автоматически сгенерированных логах
+# Проверка корректности функции log_parser.read_file на автоматически сгенерированных логах;
+# фактически именно здесь проверяется log_parser.is_valid - писать отдельный тест для функции, возвращающей бинарное значение, не кажется осмысленным.
 def read_file_gen():
     for name in ["small", "medium", "big"]:       # ToDo - all the log files in the folder
         path = "./test_files_generated/" + name

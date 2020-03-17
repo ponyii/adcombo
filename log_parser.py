@@ -2,13 +2,14 @@ import json
 # import bicycle
 # from helpers import _time
 
-# узкие места - json.loads и is_valid
+# Чтение файла лога, группировка запросов;
+# ОСТРОЖНО, корректность лога не проверяется.
+# узкие места - json.loads и is_valid.
 def read_file(path):
     result = {"valid": {}, "non_valid": {}}
     with open(path, 'r') as f:
         for line in f:
-            request = json.loads(line)        # json.loads, очевидно, совершает избыточное число проверок, и для запросов можно написать более быстрый парсер.
-                                              # pickle быстрее, но оперирует потоками байтов и не прочтет логи; интересно, можно писать в лог pickled requests?
+            request = json.loads(line)        # может быть оптимизировано;
             # request = bicycle.loads(line)   # см. комментарий в bicycle.py
             validness = "valid" if is_valid(request) else "non_valid"
             timestamp = request["timestamp"] - request["timestamp"] % (3600 * 24)                 # начало дня
@@ -18,9 +19,8 @@ def read_file(path):
 
     return result
 
-# @request - запрос (dict), описанный в https://gist.github.com/onyxim/bb2d1828df741499d17ba97ad3319ef1
-# @returns (is_valid, timestamp, event_type)
-# корректность аргумента не проверяется
+# Определяет валидность запроса (переданного как dict);
+# ОСТРОЖНО, корректность аргумента не проверяется.
 def is_valid(request):
     expected_ids = set( request["ids"] )
     query_ids = set()
