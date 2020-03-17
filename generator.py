@@ -4,7 +4,7 @@ import json
 '''
 При генерации используется какое-то количество hardcoded значений;
 с одной стороны, от них хотелось бы избавиться, с другой - это усложнит чтение кода.
-Я счел, что это неоднозначный вопрос, решающийся прочтением code policy компании, и (за отсутствием оного) оставил все как есть. 
+Я счел, что это неоднозначный вопрос, решающийся прочтением code policy компании, и (за отсутствием оного) оставил все как есть.
 '''
 
 def _coin():
@@ -21,13 +21,17 @@ def generate_log(path, days_num, lines_num):
             timestamp = last * 3600 * 24
             groups["valid"]    [timestamp] = {"create": 0, "update": 0, "delete": 0}
             groups["non_valid"][timestamp] = {"create": 0, "update": 0, "delete": 0}
+            is_zero = {"valid": True, "non_valid": True}  # есть ли хоть один представитель
             for i in range( random.randint(lines_num, lines_num * 2) ):
                 event_type = random.sample( ["create", "update", "delete"], 1 )[0]
                 is_valid = _coin()                          # валидная и невалидная строка равновероятны
                 validness = "valid" if is_valid else "non_valid"
+                is_zero[validness] = False
                 groups[validness][timestamp][event_type] += 1
                 f.write( generate_line(is_valid, event_type, timestamp) + "\n" )
-            # ToDo - check if groups[validness][timestemp] is empty
+            for validness, value in is_zero.items():
+                if value:         # маловероятно при значительных lines_num
+                    groups.remove(validness)
 
     with open(path + ".groups", "w") as f:
         f.write(json.dumps(groups, sort_keys=True))
