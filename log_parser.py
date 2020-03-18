@@ -39,7 +39,7 @@ def is_valid(request):
             id = int(q[left + len(prefix) : right])       # от конвертации можно избавиться, если читать ids запроса как массив строк
             # id = q[left + len(prefix) : right]          # см. комментарий в bicycle.py
 
-            if id not in expected_ids:     # ToDo - move it to callback?
+            if id not in expected_ids:         # обработка найденного id
                 return False
             query_ids.add(id)
 
