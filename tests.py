@@ -44,10 +44,10 @@ def _merge_groups_internal(groups, expected_result):
     for i in range(1, len(groups)):
         dir_parser.merge_groups( groups[0], groups[i] )
     assert groups[0] == expected_result, \
-        "DIFFERNT GROUPS:\n" + groups[0] + "\n" + expected_result
+        "DIFFERNT GROUPS:\n" + json.dumps(groups[0], sort_keys=True, indent=4) + "\n" + json.dumps(expected_result, sort_keys=True, indent=4)
 
-# test for dir_parser.merge_groups
-def merge_groups():
+# проверка корректности dir_parser.merge_groups на маленьких рукпосиных примерах
+def merge_groups_small():
      # tuple of pairs (groups, expected_result)
     cases = (
         # 2 groups, no common keys
@@ -67,9 +67,26 @@ def merge_groups():
     for groups, expected_result in cases:
         _merge_groups_internal(groups, expected_result)
 
+# проверка корректности dir_parser.merge_groups на большом автогенеренном примере
+def merge_groups_big():
+    n = 1000
+
+    groups = []
+    for i in range(1, n):
+        groups.append( {"valid": {i : {"a" : i}}} )
+        groups[-1]["valid"][i + 1] = {"a": i}
+
+    expected_result = {"valid": {1 : {"a" : 1}, n : {"a" : n - 1}}}
+    for i in range(2, n):
+        expected_result["valid"][i] = {"a" : 2 * i - 1}
+        
+    _merge_groups_internal(groups, expected_result)
+
+
 # в "настоящем" коде этих строк бы не было, но был бы специальный запускатель тестов
 if __name__ == "__main__":
     read_file_gen("./test_files_generated")
     read_file_real("./test_files")
     read_dir_real("./test_files/")
-    merge_groups()
+    merge_groups_small()
+    merge_groups_big()
